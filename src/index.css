@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,600&family=Italiana&family=Inter:wght@300;400;500;600;700&family=Pinyon+Script&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Playfair Display", "Italiana", Georgia, serif;
+  --font-script: "Pinyon Script", cursive;
+  
+  /* Theme Palette: Dusty Rose */
+  --color-dustyrose-50: #fbf6f7;
+  --color-dustyrose-100: #f5e9ec;
+  --color-dustyrose-200: #ecd4d9;
+  --color-dustyrose-300: #deb4be;
+  --color-dustyrose-400: #cc8ea0;
+  --color-dustyrose-500: #b76e79;
+  --color-dustyrose-600: #a35864;
+  --color-dustyrose-700: #87434e;
+  --color-dustyrose-800: #6f3841;
+  --color-dustyrose-900: #4a1f26;
+  --color-dustyrose-950: #250b10;
+
+  /* Theme Palette: Sage Green */
+  --color-sage-50: #f4f7f4;
+  --color-sage-100: #e6eee7;
+  --color-sage-200: #cfddd0;
+  --color-sage-300: #adc4af;
+  --color-sage-400: #8da88f;
+  --color-sage-500: #728e75;
+  --color-sage-600: #58735b;
+  --color-sage-700: #455a47;
+  --color-sage-800: #38483a;
+  --color-sage-900: #2b392d;
+  --color-sage-950: #151d16;
+
+  /* Theme Palette: Champagne Gold */
+  --color-champagne-50: #fdfbf5;
+  --color-champagne-100: #f8f3e3;
+  --color-champagne-200: #f0e6c5;
+  --color-champagne-300: #e5d39e;
+  --color-champagne-400: #d6bb6e;
+  --color-champagne-500: #c5a047;
+  --color-champagne-600: #ab8335;
+  --color-champagne-700: #89632a;
+  --color-champagne-800: #704f26;
+  --color-champagne-900: #5c4123;
+  --color-champagne-950: #34220f;
+
+  /* Backward compatibility mapping to Dusty Rose / Sage Green / Champagne Gold */
+  --color-maroon-50: #fbf6f7;
+  --color-maroon-100: #f5e9ec;
+  --color-maroon-200: #ecd4d9;
+  --color-maroon-300: #deb4be;
+  --color-maroon-400: #cc8ea0;
+  --color-maroon-500: #b76e79;
+  --color-maroon-600: #a35864;
+  --color-maroon-700: #87434e;
+  --color-maroon-800: #6f3841;
+  --color-maroon-850: #4a1f26;
+  --color-maroon-900: #331219;
+  --color-maroon-950: #20080d;
+  
+  --color-emerald-50: #f4f7f4;
+  --color-emerald-100: #e6eee7;
+  --color-emerald-200: #cfddd0;
+  --color-emerald-300: #adc4af;
+  --color-emerald-400: #8da88f;
+  --color-emerald-500: #728e75;
+  --color-emerald-600: #58735b;
+  --color-emerald-700: #455a47;
+  --color-emerald-800: #38483a;
+  --color-emerald-900: #2b392d;
+  --color-emerald-950: #151d16;
+
+  --color-gold-100: #f8f3e3;
+  --color-gold-200: #f0e6c5;
+  --color-gold-300: #e5d39e;
+  --color-gold-400: #d6bb6e;
+  --color-gold-500: #c5a047;
+  --color-gold-600: #ab8335;
+  --color-gold-700: #89632a;
+}
+
+/* Custom Metallic Champagne Gold Utilities */
+.text-gold-gradient {
+  background: linear-gradient(135deg, #f7eccb 0%, #d4af37 40%, #edd898 70%, #9e7b26 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.text-gold-light {
+  background: linear-gradient(135deg, #fff7dc 0%, #e6cb7e 50%, #faecc1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.bg-gold-gradient {
+  background: linear-gradient(135deg, #ebd692 0%, #d4af37 40%, #a88226 100%);
+}
+
+.bg-gold-shimmer {
+  background: linear-gradient(110deg, #ab8335 0%, #faecc1 25%, #d4af37 50%, #faecc1 75%, #ab8335 100%);
+  background-size: 200% 100%;
+  animation: shimmer 8s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.border-gold-gradient {
+  border-image: linear-gradient(135deg, #faecc1, #d4af37, #89632a) 1;
+}
+
+/* Luxury Paper Texture Filter with Dusty Rose & Sage Green subtle fibers */
+.bg-paper-texture {
+  background-color: #fdfbf7;
+  background-image: radial-gradient(#b76e79 0.4px, transparent 0.4px), radial-gradient(#728e75 0.4px, #fdfbf7 0.4px);
+  background-size: 16px 16px;
+  background-position: 0 0, 8px 8px;
+  background-color: #fdfbf7;
+}
+
+/* Luxury Card Shadow & Frame */
+.stationery-card {
+  box-shadow: 0 20px 50px -15px rgba(74, 31, 38, 0.12), 0 0 0 1px rgba(212, 175, 55, 0.3);
+}
+
+.stationery-card-sage {
+  box-shadow: 0 20px 50px -15px rgba(33, 47, 35, 0.16), 0 0 0 1px rgba(212, 175, 55, 0.3);
+}
+
+/* Smooth custom scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #250b10;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4af37;
+  border-radius: 4px;
+}
