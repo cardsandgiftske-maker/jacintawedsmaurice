@@ -13,8 +13,18 @@ import {
   getDocFromServer
 } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
-import firebaseConfig from '../../firebase-applet-config.json';
 import { RsvpGuest } from '../types';
+
+// Load Firebase configuration safely from Vite environment variables, falling back gracefully if missing
+const firebaseConfig = {
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
+  appId: import.meta.env.VITE_FIREBASE_APP_ID || '',
+  firestoreDatabaseId: import.meta.env.VITE_FIREBASE_DATABASE_ID || '(default)',
+};
 
 export enum OperationType {
   CREATE = 'create',
@@ -65,12 +75,12 @@ export function handleFirestoreError(error: unknown, operationType: OperationTyp
 }
 
 // Check if Firebase is fully configured
-export const isFirebaseConfigured = !!(firebaseConfig && firebaseConfig.projectId);
+export const isFirebaseConfigured = !!firebaseConfig.projectId;
 
 // Initialize Firebase App
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// CRITICAL: Initialize Firestore with the exact Database ID from firebase-applet-config.json
+// CRITICAL: Initialize Firestore with the database ID
 export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
 export const auth = getAuth(app);
 
