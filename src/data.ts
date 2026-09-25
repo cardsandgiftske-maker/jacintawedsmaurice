@@ -19,9 +19,9 @@ export const WEDDING_DETAILS = {
   ceremony: {
     time: '10:00 AM Prompt',
     venue: 'Parklands Baptist Church',
-    address: 'Kippro Center, 20 Sports Rd, Nairobi',
-    coordinates: { lat: -1.2667, lng: 36.8122 },
-    mapEmbedUrl: 'https://maps.google.com/maps?q=Kippro+Center,+20+Sports+Rd,+Nairobi&t=&z=16&ie=UTF8&iwloc=&output=embed',
+    address: 'Kippro Center, 20 Sports Rd, Nairobi, Kenya',
+    coordinates: { lat: -1.265992, lng: 36.7998837 },
+    mapEmbedUrl: 'https://maps.google.com/maps?q=-1.265992,36.7998837&t=&z=17&ie=UTF8&iwloc=&output=embed',
   },
   reception: {
     time: '1:00 PM',
