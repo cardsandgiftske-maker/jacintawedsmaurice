@@ -9,46 +9,86 @@ import {
   onSnapshot, 
   query, 
   orderBy, 
-  updateDoc 
+  updateDoc,
+  getDocFromServer
 } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import firebaseConfig from '../../firebase-applet-config.json';
 import { RsvpGuest } from '../types';
 
-// Read Firebase configuration from Vite environment variables
-const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID
-};
+export enum OperationType {
+  CREATE = 'create',
+  UPDATE = 'update',
+  DELETE = 'delete',
+  LIST = 'list',
+  GET = 'get',
+  WRITE = 'write',
+}
+
+export interface FirestoreErrorInfo {
+  error: string;
+  operationType: OperationType;
+  path: string | null;
+  authInfo: {
+    userId?: string | null;
+    email?: string | null;
+    emailVerified?: boolean | null;
+    isAnonymous?: boolean | null;
+    tenantId?: string | null;
+    providerInfo?: {
+      providerId?: string | null;
+      email?: string | null;
+    }[];
+  };
+}
+
+export function handleFirestoreError(error: unknown, operationType: OperationType, path: string | null) {
+  const currentUser = auth ? auth.currentUser : null;
+  const errInfo: FirestoreErrorInfo = {
+    error: error instanceof Error ? error.message : String(error),
+    authInfo: {
+      userId: currentUser?.uid,
+      email: currentUser?.email,
+      emailVerified: currentUser?.emailVerified,
+      isAnonymous: currentUser?.isAnonymous,
+      tenantId: currentUser?.tenantId,
+      providerInfo: currentUser?.providerData?.map((provider) => ({
+        providerId: provider.providerId,
+        email: provider.email,
+      })) || [],
+    },
+    operationType,
+    path,
+  };
+  console.error('Firestore Error: ', JSON.stringify(errInfo));
+  return errInfo;
+}
 
 // Check if Firebase is fully configured
-export const isFirebaseConfigured = !!(
-  firebaseConfig.apiKey &&
-  firebaseConfig.projectId &&
-  firebaseConfig.apiKey !== 'MY_FIREBASE_API_KEY'
-);
+export const isFirebaseConfigured = !!(firebaseConfig && firebaseConfig.projectId);
 
-let dbInstance: any = null;
+// Initialize Firebase App
+const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-// Lazy initialize Firebase and Firestore to prevent startup crashes if keys are empty or misconfigured
-export function getDb() {
-  if (!isFirebaseConfigured) {
-    return null;
-  }
-  
-  if (!dbInstance) {
-    try {
-      const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
-      dbInstance = getFirestore(app);
-    } catch (error) {
-      console.error('Firebase initialization error:', error);
-      return null;
+// CRITICAL: Initialize Firestore with the exact Database ID from firebase-applet-config.json
+export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const auth = getAuth(app);
+
+// Test Firestore Connection on Boot
+export async function testConnection(): Promise<boolean> {
+  try {
+    await getDocFromServer(doc(db, 'test', 'connection'));
+    return true;
+  } catch (error) {
+    if (error instanceof Error && error.message.includes('the client is offline')) {
+      console.warn('Firestore client is offline or connecting...');
     }
+    return false;
   }
-  return dbInstance;
 }
+
+// Run test connection
+testConnection().catch(() => {});
 
 // COLLECTION NAME
 const COLLECTION_NAME = 'rsvps';
@@ -66,42 +106,40 @@ const saveLocalRsvps = (rsvps: RsvpGuest[]) => {
 const getSeedData = (): RsvpGuest[] => {
   return [
     {
-      id: 'seed-1',
+      id: 'rsvp-seed-1',
       fullName: 'Christopher Mwangi',
       phoneNumber: '+254 712 345 678',
       willAttend: 'yes',
       adultsCount: 2,
       childrenCount: 1,
-      submittedAt: '2026-07-15T12:30:00.000Z',
-      eCardCode: 'CJ-26-X83A',
-      notes: 'Looking forward to delivering the vote of thanks!'
+      submittedAt: '2026-08-15T12:30:00.000Z',
+      eCardCode: 'JM-26-X83A',
+      notes: 'Delighted to celebrate with Jacinta and Maurice!',
     },
     {
-      id: 'seed-2',
+      id: 'rsvp-seed-2',
       fullName: 'Mercy Wanjiku',
       phoneNumber: '+254 722 987 654',
       willAttend: 'yes',
       adultsCount: 1,
       childrenCount: 0,
-      submittedAt: '2026-07-16T09:15:00.000Z',
-      eCardCode: 'CJ-26-K92B',
-      notes: 'Gluten-free / vegetarian dietary preference please.'
+      submittedAt: '2026-08-16T09:15:00.000Z',
+      eCardCode: 'JM-26-K92B',
+      notes: 'Congratulations! Elegant and classy wear ready.',
     },
     {
-      id: 'seed-3',
+      id: 'rsvp-seed-3',
       fullName: 'David Omondi',
       phoneNumber: '+254 733 444 555',
       willAttend: 'no',
       adultsCount: 0,
       childrenCount: 0,
-      submittedAt: '2026-07-18T16:45:00.000Z',
-      eCardCode: 'CJ-26-R15C',
-      notes: 'Sending love! Traveling out of the country on that weekend.'
-    }
+      submittedAt: '2026-08-18T16:45:00.000Z',
+      eCardCode: 'JM-26-R15C',
+      notes: 'Sending warmest blessings from abroad on your special day.',
+    },
   ];
 };
-
-// EXPORTED CORE API FUNCTIONS (SFC / transparent dual database logic)
 
 /**
  * Clean and normalize phone numbers for deduplication checks
@@ -123,84 +161,77 @@ export function normalizePhoneNumber(phone: string): string {
 export async function hasPhoneAlreadyRsvped(phone: string): Promise<boolean> {
   const normInput = normalizePhoneNumber(phone);
   if (!normInput || normInput.length < 5) return false;
-  
+
   const allRsvps = await getRsvps();
   return allRsvps.some((r) => normalizePhoneNumber(r.phoneNumber) === normInput);
 }
 
 /**
- * Save or update an RSVP entry
+ * Save or update an RSVP entry in Firestore
  */
 export async function saveRsvp(rsvp: RsvpGuest): Promise<void> {
-  const db = getDb();
-  if (db) {
-    try {
-      const docRef = doc(db, COLLECTION_NAME, rsvp.id);
-      await setDoc(docRef, rsvp);
-      return;
-    } catch (error) {
-      console.warn('Failed to save to Firebase, saving to localStorage instead:', error);
-    }
+  try {
+    const docRef = doc(db, COLLECTION_NAME, rsvp.id);
+    await setDoc(docRef, rsvp);
+    // Sync to local as backup cache
+    const existing = getLocalRsvps();
+    const updated = existing.filter((item) => item.id !== rsvp.id && item.phoneNumber !== rsvp.phoneNumber);
+    updated.push(rsvp);
+    saveLocalRsvps(updated);
+    return;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.WRITE, `${COLLECTION_NAME}/${rsvp.id}`);
+    // Local storage fallback
+    const existing = getLocalRsvps();
+    const updated = existing.filter((item) => item.id !== rsvp.id && item.phoneNumber !== rsvp.phoneNumber);
+    updated.push(rsvp);
+    saveLocalRsvps(updated);
   }
-  
-  // Local storage fallback
-  const existing = getLocalRsvps();
-  const updated = existing.filter((item) => item.id !== rsvp.id && item.phoneNumber !== rsvp.phoneNumber);
-  updated.push(rsvp);
-  saveLocalRsvps(updated);
 }
 
 /**
- * Fetch all RSVPs. Returns seed data if empty and saves it.
+ * Fetch all RSVPs from Firestore. Auto-seeds initial sample records if empty.
  */
 export async function getRsvps(): Promise<RsvpGuest[]> {
-  const db = getDb();
-  if (db) {
-    try {
-      const q = query(collection(db, COLLECTION_NAME), orderBy('submittedAt', 'desc'));
-      const querySnapshot = await getDocs(q);
-      const rsvps: RsvpGuest[] = [];
-      querySnapshot.forEach((doc) => {
-        rsvps.push(doc.data() as RsvpGuest);
-      });
-      
-      // If Firestore database is brand new and completely empty, auto-seed it
-      if (rsvps.length === 0) {
-        const seed = getSeedData();
-        for (const item of seed) {
-          await setDoc(doc(db, COLLECTION_NAME, item.id), item);
-          rsvps.push(item);
-        }
+  try {
+    const q = query(collection(db, COLLECTION_NAME), orderBy('submittedAt', 'desc'));
+    const querySnapshot = await getDocs(q);
+    const rsvps: RsvpGuest[] = [];
+    querySnapshot.forEach((docSnap) => {
+      rsvps.push(docSnap.data() as RsvpGuest);
+    });
+
+    // If Firestore database is brand new and completely empty, auto-seed it with sample RSVP entries
+    if (rsvps.length === 0) {
+      const seed = getSeedData();
+      for (const item of seed) {
+        await setDoc(doc(db, COLLECTION_NAME, item.id), item);
+        rsvps.push(item);
       }
-      return rsvps;
-    } catch (error) {
-      console.warn('Failed to fetch from Firebase, reading from localStorage instead:', error);
     }
+    return rsvps;
+  } catch (error) {
+    handleFirestoreError(error, OperationType.LIST, COLLECTION_NAME);
+    // Local storage fallback
+    let local = getLocalRsvps();
+    if (local.length === 0) {
+      local = getSeedData();
+      saveLocalRsvps(local);
+    }
+    return local.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
   }
-  
-  // Local storage fallback
-  let local = getLocalRsvps();
-  if (local.length === 0) {
-    local = getSeedData();
-    saveLocalRsvps(local);
-  }
-  return local.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
 }
 
 /**
  * Delete an RSVP entry
  */
 export async function deleteRsvp(id: string): Promise<void> {
-  const db = getDb();
-  if (db) {
-    try {
-      await deleteDoc(doc(db, COLLECTION_NAME, id));
-      return;
-    } catch (error) {
-      console.warn('Failed to delete from Firebase, removing from localStorage:', error);
-    }
+  try {
+    await deleteDoc(doc(db, COLLECTION_NAME, id));
+  } catch (error) {
+    handleFirestoreError(error, OperationType.DELETE, `${COLLECTION_NAME}/${id}`);
   }
-  
+
   const existing = getLocalRsvps();
   const updated = existing.filter((item) => item.id !== id);
   saveLocalRsvps(updated);
@@ -215,21 +246,17 @@ export async function updateRsvpStatus(
   adultsCount: number, 
   childrenCount: number = 0
 ): Promise<void> {
-  const db = getDb();
-  if (db) {
-    try {
-      const docRef = doc(db, COLLECTION_NAME, id);
-      await updateDoc(docRef, {
-        willAttend,
-        adultsCount,
-        childrenCount
-      });
-      return;
-    } catch (error) {
-      console.warn('Failed to update Firebase, updating localStorage:', error);
-    }
+  try {
+    const docRef = doc(db, COLLECTION_NAME, id);
+    await updateDoc(docRef, {
+      willAttend,
+      adultsCount,
+      childrenCount,
+    });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, `${COLLECTION_NAME}/${id}`);
   }
-  
+
   const existing = getLocalRsvps();
   const updated = existing.map((item) => {
     if (item.id === id) {
@@ -237,7 +264,7 @@ export async function updateRsvpStatus(
         ...item,
         willAttend,
         adultsCount,
-        childrenCount
+        childrenCount,
       };
     }
     return item;
@@ -246,42 +273,41 @@ export async function updateRsvpStatus(
 }
 
 /**
- * Real-time RSVP updates subscription
+ * Real-time RSVP updates subscription using onSnapshot
  */
 export function subscribeToRsvps(onUpdate: (rsvps: RsvpGuest[]) => void): () => void {
-  const db = getDb();
-  if (db) {
-    try {
-      const q = query(collection(db, COLLECTION_NAME), orderBy('submittedAt', 'desc'));
-      return onSnapshot(q, (snapshot) => {
+  try {
+    const q = query(collection(db, COLLECTION_NAME), orderBy('submittedAt', 'desc'));
+    return onSnapshot(
+      q,
+      (snapshot) => {
         const rsvps: RsvpGuest[] = [];
-        snapshot.forEach((doc) => {
-          rsvps.push(doc.data() as RsvpGuest);
+        snapshot.forEach((docSnap) => {
+          rsvps.push(docSnap.data() as RsvpGuest);
         });
         if (rsvps.length > 0) {
           onUpdate(rsvps);
         } else {
-          // If Firestore exists but is empty, trigger getRsvps to seed it
+          // If Firestore is empty, auto-seed
           getRsvps().then(onUpdate);
         }
-      }, (error) => {
-        console.warn('Firebase snapshot subscription failed:', error);
-      });
-    } catch (e) {
-      console.warn('Could not subscribe in real-time, relying on polling:', e);
-    }
+      },
+      (error) => {
+        handleFirestoreError(error, OperationType.GET, COLLECTION_NAME);
+      }
+    );
+  } catch (e) {
+    console.warn('Real-time listener setup failed, using local polling fallback:', e);
   }
-  
+
   // Local storage listener fallback
   const handleLocalUpdate = () => {
     onUpdate(getLocalRsvps().sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime()));
   };
-  
+
   window.addEventListener('rsvp_database_updated', handleLocalUpdate);
-  
-  // Trigger initial callback
   handleLocalUpdate();
-  
+
   return () => {
     window.removeEventListener('rsvp_database_updated', handleLocalUpdate);
   };
