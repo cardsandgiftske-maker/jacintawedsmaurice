@@ -78,10 +78,10 @@ export default function Hero() {
           className="max-w-xl mx-auto mb-4 text-center"
         >
           <p className="text-dustyrose-700 font-sans tracking-[0.22em] text-[10px] md:text-xs uppercase font-bold mb-1">
-            Together with their Families
+            Together with Our Families
           </p>
           <p className="text-stone-600 font-serif text-xs md:text-sm italic leading-relaxed">
-            cordially invite you to celebrate the holy matrimony and wedding celebration of
+            we joyfully invite you to celebrate the Holy Matrimony and wedding celebration.
           </p>
         </motion.div>
 
