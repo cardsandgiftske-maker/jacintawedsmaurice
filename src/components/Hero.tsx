@@ -70,49 +70,32 @@ export default function Hero() {
           <Crest size="md" animated={true} />
         </div>
 
-        {/* Family Names Presentation */}
+        {/* Family Introduction Block (unframed) */}
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.3 }}
-          className="max-w-2xl mx-auto mb-4 bg-white/70 backdrop-blur-xs border border-champagne-300/60 rounded-2xl px-5 py-3 shadow-xs"
+          transition={{ duration: 0.8, delay: 0.25 }}
+          className="max-w-xl mx-auto mb-4 text-center"
         >
-          <p className="text-dustyrose-700 font-sans tracking-[0.2em] text-[10px] md:text-xs uppercase font-bold mb-1">
+          <p className="text-dustyrose-700 font-sans tracking-[0.22em] text-[10px] md:text-xs uppercase font-bold mb-1">
             Together with their Families
           </p>
-          <p className="text-stone-800 font-serif text-xs md:text-sm leading-relaxed italic">
-            The family of <span className="font-semibold text-stone-900 not-italic">Mr Joseph Mbilo &amp; Late Mrs. Martha Nduku</span>
-            <br />
-            &amp;
-            <br />
-            The family of <span className="font-semibold text-stone-900 not-italic">Late Mr Joseph Odoyo &amp; Late Mrs. Monica Agola</span>
-          </p>
-          <p className="text-stone-500 font-serif text-xs md:text-sm mt-1">
-            cordially invite you to celebrate the holy matrimony and wedding celebration of their children
+          <p className="text-stone-600 font-serif text-xs md:text-sm italic leading-relaxed">
+            cordially invite you to celebrate the holy matrimony and wedding celebration of
           </p>
         </motion.div>
 
-        {/* Main Title: Jacinta & Maurice */}
+        {/* Main Title: Jacinta & Maurice in ONE uniform elegant color */}
         <motion.h1
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.5 }}
-          className="text-5xl md:text-7xl lg:text-8xl font-display font-light tracking-tight text-stone-900 mb-3"
+          transition={{ duration: 1, delay: 0.3 }}
+          className="text-5xl md:text-7xl lg:text-8xl font-display font-medium tracking-tight text-stone-900 mb-6"
         >
-          <span className="block mb-1 md:inline md:mb-0 text-dustyrose-800 font-medium">Jacinta</span>
-          <span className="font-display font-light text-champagne-500 mx-4 text-4xl md:text-6xl italic">&amp;</span>
-          <span className="block mt-1 md:inline md:mt-0 text-sage-800 font-medium">Maurice</span>
+          <span>Jacinta</span>
+          <span className="font-display font-light text-stone-900 mx-3 md:mx-4 text-4xl md:text-6xl italic">&amp;</span>
+          <span>Maurice</span>
         </motion.h1>
-
-        {/* Full Names Subtitle */}
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.6 }}
-          className="font-serif text-stone-600 text-sm md:text-base tracking-widest uppercase mb-5"
-        >
-          Jacinta Mbilo &amp; Maurice Opiyo
-        </motion.p>
 
         {/* Date & Time Badge */}
         <motion.div
