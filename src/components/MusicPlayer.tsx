@@ -95,7 +95,7 @@ export default function MusicPlayer({ shouldPlay }: MusicPlayerProps) {
         id="youtube-bg-player"
         width="1"
         height="1"
-        src={`https://www.youtube.com/embed/jtK-xIM-7tU?enablejsapi=1&autoplay=0&controls=0&loop=1&playlist=jtK-xIM-7tU&origin=${typeof window !== 'undefined' ? encodeURIComponent(window.location.origin) : ''}`}
+        src={`https://www.youtube.com/embed/sxFhAoxzYXc?enablejsapi=1&autoplay=0&controls=0&loop=1&playlist=sxFhAoxzYXc&origin=${typeof window !== 'undefined' ? encodeURIComponent(window.location.origin) : ''}`}
         allow="autoplay; encrypted-media"
         className="fixed -left-10 -top-10 w-[1px] h-[1px] opacity-0 pointer-events-none z-0"
         onLoad={() => setIframeLoaded(true)}
