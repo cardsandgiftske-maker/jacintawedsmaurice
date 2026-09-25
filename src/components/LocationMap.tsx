@@ -12,8 +12,8 @@ export default function LocationMap() {
   const venueInfo = activeVenue === 'ceremony' ? WEDDING_DETAILS.ceremony : WEDDING_DETAILS.reception;
 
   const getNavigationUrl = () => {
-    if (activeVenue === 'ceremony') {
-      return 'https://www.google.com/maps/place/Parklands+Baptist+Church/@-1.265992,36.7998837,17z';
+    if (activeVenue === 'ceremony' && 'directMapUrl' in WEDDING_DETAILS.ceremony) {
+      return WEDDING_DETAILS.ceremony.directMapUrl;
     }
     const venueName = encodeURIComponent(venueInfo.venue + ' ' + venueInfo.address);
     return `https://www.google.com/maps/search/?api=1&query=${venueName}`;
