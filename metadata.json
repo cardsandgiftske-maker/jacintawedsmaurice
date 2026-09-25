@@ -1,8 +1,0 @@
-{
-  "name": "Jacinta and Maurice Invitation",
-  "description": "An elegant, romantic wedding invitation and RSVP portal for Jacinta Mbilo and Maurice Opiyo's wedding, featuring schedule, dress code, maps, and theme colors Dusty Rose, Sage Green, and Champagne Gold.",
-  "requestFramePermissions": [],
-  "majorCapabilities": [
-    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
-  ]
-}
