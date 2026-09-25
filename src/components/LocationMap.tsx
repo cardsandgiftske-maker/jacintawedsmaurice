@@ -9,15 +9,12 @@ import receptionVenueImg from '../assets/images/reception_venue_1784475057575.jp
 export default function LocationMap() {
   const [activeVenue, setActiveVenue] = useState<'ceremony' | 'reception'>('ceremony');
 
-  // Updated address for ceremony
-  const ceremonyDetails = {
-    ...WEDDING_DETAILS.ceremony,
-    address: 'Kippro Center, 20 Sports Rd, Nairobi',
-  };
-
-  const venueInfo = activeVenue === 'ceremony' ? ceremonyDetails : WEDDING_DETAILS.reception;
+  const venueInfo = activeVenue === 'ceremony' ? WEDDING_DETAILS.ceremony : WEDDING_DETAILS.reception;
 
   const getNavigationUrl = () => {
+    if (activeVenue === 'ceremony') {
+      return 'https://www.google.com/maps/place/Parklands+Baptist+Church/@-1.265992,36.7998837,17z';
+    }
     const venueName = encodeURIComponent(venueInfo.venue + ' ' + venueInfo.address);
     return `https://www.google.com/maps/search/?api=1&query=${venueName}`;
   };
