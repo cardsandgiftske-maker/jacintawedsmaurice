@@ -9,7 +9,13 @@ import receptionVenueImg from '../assets/images/reception_venue_1784475057575.jp
 export default function LocationMap() {
   const [activeVenue, setActiveVenue] = useState<'ceremony' | 'reception'>('ceremony');
 
-  const venueInfo = activeVenue === 'ceremony' ? WEDDING_DETAILS.ceremony : WEDDING_DETAILS.reception;
+  // Updated address for ceremony
+  const ceremonyDetails = {
+    ...WEDDING_DETAILS.ceremony,
+    address: 'Kippro Center, 20 Sports Rd, Nairobi',
+  };
+
+  const venueInfo = activeVenue === 'ceremony' ? ceremonyDetails : WEDDING_DETAILS.reception;
 
   const getNavigationUrl = () => {
     const venueName = encodeURIComponent(venueInfo.venue + ' ' + venueInfo.address);
