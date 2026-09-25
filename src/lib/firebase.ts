@@ -95,51 +95,53 @@ const COLLECTION_NAME = 'rsvps';
 
 // LOCAL STORAGE FALLBACK HELPERS
 const getLocalRsvps = (): RsvpGuest[] => {
-  return JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
+  try {
+    const list: RsvpGuest[] = JSON.parse(localStorage.getItem('wedding_rsvps') || '[]');
+    return list.filter((item) => item.id && !item.id.includes('seed'));
+  } catch {
+    return [];
+  }
 };
 
 const saveLocalRsvps = (rsvps: RsvpGuest[]) => {
-  localStorage.setItem('wedding_rsvps', JSON.stringify(rsvps));
+  const clean = rsvps.filter((item) => item.id && !item.id.includes('seed'));
+  localStorage.setItem('wedding_rsvps', JSON.stringify(clean));
   window.dispatchEvent(new Event('rsvp_database_updated'));
 };
 
-const getSeedData = (): RsvpGuest[] => {
-  return [
-    {
-      id: 'rsvp-seed-1',
-      fullName: 'Christopher Mwangi',
-      phoneNumber: '+254 712 345 678',
-      willAttend: 'yes',
-      adultsCount: 2,
-      childrenCount: 1,
-      submittedAt: '2026-08-15T12:30:00.000Z',
-      eCardCode: 'JM-26-X83A',
-      notes: 'Delighted to celebrate with Jacinta and Maurice!',
-    },
-    {
-      id: 'rsvp-seed-2',
-      fullName: 'Mercy Wanjiku',
-      phoneNumber: '+254 722 987 654',
-      willAttend: 'yes',
-      adultsCount: 1,
-      childrenCount: 0,
-      submittedAt: '2026-08-16T09:15:00.000Z',
-      eCardCode: 'JM-26-K92B',
-      notes: 'Congratulations! Elegant and classy wear ready.',
-    },
-    {
-      id: 'rsvp-seed-3',
-      fullName: 'David Omondi',
-      phoneNumber: '+254 733 444 555',
-      willAttend: 'no',
-      adultsCount: 0,
-      childrenCount: 0,
-      submittedAt: '2026-08-18T16:45:00.000Z',
-      eCardCode: 'JM-26-R15C',
-      notes: 'Sending warmest blessings from abroad on your special day.',
-    },
-  ];
-};
+const KNOWN_SEED_IDS = ['rsvp-seed-1', 'rsvp-seed-2', 'rsvp-seed-3', 'seed-1', 'seed-2', 'seed-3'];
+
+/**
+ * Purge any residual seed documents from Firestore and localStorage
+ */
+export async function purgeSeedData(): Promise<void> {
+  // Purge from Firestore
+  try {
+    for (const seedId of KNOWN_SEED_IDS) {
+      await deleteDoc(doc(db, COLLECTION_NAME, seedId)).catch(() => {});
+    }
+  } catch {
+    // ignore
+  }
+
+  // Purge from local storage cache
+  try {
+    const raw = localStorage.getItem('wedding_rsvps');
+    if (raw) {
+      const parsed: RsvpGuest[] = JSON.parse(raw);
+      const cleaned = parsed.filter((item) => item.id && !item.id.includes('seed'));
+      if (cleaned.length !== parsed.length) {
+        localStorage.setItem('wedding_rsvps', JSON.stringify(cleaned));
+        window.dispatchEvent(new Event('rsvp_database_updated'));
+      }
+    }
+  } catch {
+    // ignore
+  }
+}
+
+// Automatically trigger purge of any seed data on boot
+purgeSeedData().catch(() => {});
 
 /**
  * Clean and normalize phone numbers for deduplication checks
@@ -190,7 +192,7 @@ export async function saveRsvp(rsvp: RsvpGuest): Promise<void> {
 }
 
 /**
- * Fetch all RSVPs from Firestore. Auto-seeds initial sample records if empty.
+ * Fetch all RSVPs from Firestore (real submissions only, no seed data)
  */
 export async function getRsvps(): Promise<RsvpGuest[]> {
   try {
@@ -198,26 +200,16 @@ export async function getRsvps(): Promise<RsvpGuest[]> {
     const querySnapshot = await getDocs(q);
     const rsvps: RsvpGuest[] = [];
     querySnapshot.forEach((docSnap) => {
-      rsvps.push(docSnap.data() as RsvpGuest);
-    });
-
-    // If Firestore database is brand new and completely empty, auto-seed it with sample RSVP entries
-    if (rsvps.length === 0) {
-      const seed = getSeedData();
-      for (const item of seed) {
-        await setDoc(doc(db, COLLECTION_NAME, item.id), item);
-        rsvps.push(item);
+      const data = docSnap.data() as RsvpGuest;
+      // Filter out any seed entries
+      if (data.id && !data.id.includes('seed')) {
+        rsvps.push(data);
       }
-    }
+    });
     return rsvps;
   } catch (error) {
     handleFirestoreError(error, OperationType.LIST, COLLECTION_NAME);
-    // Local storage fallback
-    let local = getLocalRsvps();
-    if (local.length === 0) {
-      local = getSeedData();
-      saveLocalRsvps(local);
-    }
+    const local = getLocalRsvps();
     return local.sort((a, b) => new Date(b.submittedAt).getTime() - new Date(a.submittedAt).getTime());
   }
 }
@@ -273,7 +265,7 @@ export async function updateRsvpStatus(
 }
 
 /**
- * Real-time RSVP updates subscription using onSnapshot
+ * Real-time RSVP updates subscription using onSnapshot (real submissions only)
  */
 export function subscribeToRsvps(onUpdate: (rsvps: RsvpGuest[]) => void): () => void {
   try {
@@ -283,14 +275,12 @@ export function subscribeToRsvps(onUpdate: (rsvps: RsvpGuest[]) => void): () => 
       (snapshot) => {
         const rsvps: RsvpGuest[] = [];
         snapshot.forEach((docSnap) => {
-          rsvps.push(docSnap.data() as RsvpGuest);
+          const data = docSnap.data() as RsvpGuest;
+          if (data.id && !data.id.includes('seed')) {
+            rsvps.push(data);
+          }
         });
-        if (rsvps.length > 0) {
-          onUpdate(rsvps);
-        } else {
-          // If Firestore is empty, auto-seed
-          getRsvps().then(onUpdate);
-        }
+        onUpdate(rsvps);
       },
       (error) => {
         handleFirestoreError(error, OperationType.GET, COLLECTION_NAME);
