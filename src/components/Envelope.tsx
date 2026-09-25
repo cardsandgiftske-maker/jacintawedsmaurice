@@ -58,7 +58,7 @@ export default function Envelope({ onOpen, onSealBreak }: EnvelopeProps) {
         />
       </div>
 
-      {/* Main interactive envelope container */}
+      {/* Main interactive envelope container with crisp white luxury frame */}
       <motion.div
         initial={{ opacity: 0, scale: 0.92, y: 15 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
@@ -69,10 +69,10 @@ export default function Envelope({ onOpen, onSealBreak }: EnvelopeProps) {
           transition: { duration: 0.9, ease: [0.43, 0.13, 0.23, 0.96] },
         }}
         transition={{ duration: 0.8, ease: 'easeOut' }}
-        className="relative w-full max-w-[430px] aspect-[9/16] max-h-[90vh] bg-stone-950/40 backdrop-blur-sm rounded-[40px] p-3 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] border border-stone-800/60 flex items-center justify-center overflow-hidden"
+        className="relative w-full max-w-[430px] aspect-[9/16] max-h-[90vh] bg-white/20 backdrop-blur-md rounded-[40px] p-3 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.6)] border border-white/50 flex items-center justify-center overflow-hidden"
       >
-        {/* Phone screen boundary or card viewport */}
-        <div className="relative w-full h-full bg-[#FAF7F2] rounded-[32px] overflow-hidden shadow-inner flex flex-col justify-between select-none">
+        {/* Pure White screen boundary / card viewport */}
+        <div className="relative w-full h-full bg-white rounded-[32px] overflow-hidden shadow-inner flex flex-col justify-between select-none border border-stone-100">
           {/* Top header on the invitation screen */}
           <motion.div
             animate={isCardEmerging ? { opacity: 0, y: -15 } : { opacity: 1, y: 0 }}
@@ -94,14 +94,14 @@ export default function Envelope({ onOpen, onSealBreak }: EnvelopeProps) {
           <div className="relative flex-1 w-full flex items-center justify-center px-4 overflow-visible">
             {/* The Envelope Outer Box */}
             <div className="relative w-full aspect-[4/3] flex items-center justify-center">
-              {/* 1. Envelope Back Panel & Luxurious Warm Cream / Champagne Lining (NO GREEN) */}
-              <div className="absolute inset-0 bg-[#EAE3D6] rounded-2xl shadow-[0_12px_35px_rgba(0,0,0,0.14)] border border-[#DFD8CD] overflow-hidden">
-                {/* Elegant Cream & Subtle Champagne Foil Interior Lining */}
-                <div className="absolute inset-2 rounded-xl bg-gradient-to-b from-[#F7F3EB] to-[#ECE5D8] border border-amber-300/40 flex flex-col items-center justify-center p-4">
-                  <div className="w-16 h-16 rounded-full border border-amber-300/50 flex items-center justify-center opacity-60">
+              {/* 1. Envelope Back Panel & Pure White Paper with Gold Accent */}
+              <div className="absolute inset-0 bg-white rounded-2xl shadow-[0_12px_35px_rgba(0,0,0,0.09)] border border-stone-200 overflow-hidden">
+                {/* Elegant White & Subtle Gold Foil Interior Lining */}
+                <div className="absolute inset-2 rounded-xl bg-gradient-to-b from-white via-[#FCFBF9] to-[#F7F5F0] border border-amber-200/50 flex flex-col items-center justify-center p-4">
+                  <div className="w-16 h-16 rounded-full border border-amber-300/40 flex items-center justify-center opacity-70">
                     <span className="font-serif text-amber-800 text-sm tracking-widest font-semibold">J &amp; M</span>
                   </div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-400/10 via-transparent to-transparent opacity-80" />
+                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-amber-400/10 via-transparent to-transparent opacity-60" />
                 </div>
               </div>
 
@@ -120,7 +120,7 @@ export default function Envelope({ onOpen, onSealBreak }: EnvelopeProps) {
                 onClick={() => {
                   if (isCardEmerging) onOpen();
                 }}
-                className={`absolute w-[92%] aspect-[4/3.2] bg-[#FFFDF9] rounded-xl border border-amber-300/90 shadow-[0_18px_45px_rgba(0,0,0,0.22)] p-4 flex flex-col justify-between text-center cursor-pointer transition-shadow hover:shadow-[0_22px_55px_rgba(0,0,0,0.28)] ${
+                className={`absolute w-[92%] aspect-[4/3.2] bg-white rounded-xl border border-amber-300/90 shadow-[0_18px_45px_rgba(0,0,0,0.18)] p-4 flex flex-col justify-between text-center cursor-pointer transition-shadow hover:shadow-[0_22px_55px_rgba(0,0,0,0.25)] ${
                   isCardEmerging ? 'pointer-events-auto' : 'pointer-events-none'
                 }`}
               >
@@ -173,43 +173,43 @@ export default function Envelope({ onOpen, onSealBreak }: EnvelopeProps) {
                 )}
               </motion.div>
 
-              {/* 3. Envelope Front Pocket (Left, Right, and Bottom Flaps) */}
+              {/* 3. Envelope Front Pocket (Left, Right, and Bottom Flaps) in Pure Crisp White */}
               {/* Left Flap */}
               <div className="absolute inset-0 pointer-events-none z-20">
                 <svg
-                  className="absolute inset-0 w-full h-full drop-shadow-[2px_0_4px_rgba(0,0,0,0.05)]"
+                  className="absolute inset-0 w-full h-full drop-shadow-[2px_0_4px_rgba(0,0,0,0.04)]"
                   viewBox="0 0 400 300"
                   fill="none"
                   preserveAspectRatio="none"
                 >
-                  <path d="M0 0 L200 150 L0 300 Z" fill="#EAE4D9" />
-                  <path d="M0 0 L200 150 L0 300" stroke="#DFD8CD" strokeWidth="1" />
+                  <path d="M0 0 L200 150 L0 300 Z" fill="#FFFFFF" />
+                  <path d="M0 0 L200 150 L0 300" stroke="#E5E7EB" strokeWidth="1" />
                 </svg>
 
                 {/* Right Flap */}
                 <svg
-                  className="absolute inset-0 w-full h-full drop-shadow-[-2px_0_4px_rgba(0,0,0,0.05)]"
+                  className="absolute inset-0 w-full h-full drop-shadow-[-2px_0_4px_rgba(0,0,0,0.04)]"
                   viewBox="0 0 400 300"
                   fill="none"
                   preserveAspectRatio="none"
                 >
-                  <path d="M400 0 L200 150 L400 300 Z" fill="#EAE4D9" />
-                  <path d="M400 0 L200 150 L400 300" stroke="#DFD8CD" strokeWidth="1" />
+                  <path d="M400 0 L200 150 L400 300 Z" fill="#FFFFFF" />
+                  <path d="M400 0 L200 150 L400 300" stroke="#E5E7EB" strokeWidth="1" />
                 </svg>
 
                 {/* Bottom Flap */}
                 <svg
-                  className="absolute inset-0 w-full h-full drop-shadow-[0_-3px_5px_rgba(0,0,0,0.06)]"
+                  className="absolute inset-0 w-full h-full drop-shadow-[0_-3px_5px_rgba(0,0,0,0.04)]"
                   viewBox="0 0 400 300"
                   fill="none"
                   preserveAspectRatio="none"
                 >
-                  <path d="M0 300 L200 150 L400 300 Z" fill="#E4DED2" />
-                  <path d="M0 300 L200 150 L400 300" stroke="#DFD8CD" strokeWidth="1" />
+                  <path d="M0 300 L200 150 L400 300 Z" fill="#FAFAFA" />
+                  <path d="M0 300 L200 150 L400 300" stroke="#E5E7EB" strokeWidth="1" />
                 </svg>
               </div>
 
-              {/* 4. Top Flap with 3D Fold Animation */}
+              {/* 4. Top Flap with 3D Fold Animation in Pure Crisp White */}
               <motion.div
                 initial={false}
                 animate={
@@ -234,20 +234,20 @@ export default function Envelope({ onOpen, onSealBreak }: EnvelopeProps) {
                 className="absolute inset-0 pointer-events-none"
               >
                 <svg
-                  className="w-full h-full drop-shadow-[0_6px_10px_rgba(0,0,0,0.12)]"
+                  className="w-full h-full drop-shadow-[0_6px_10px_rgba(0,0,0,0.08)]"
                   viewBox="0 0 400 300"
                   fill="none"
                   preserveAspectRatio="none"
                 >
-                  <path d="M0 0 L200 150 L400 0 Z" fill="#ECE6DB" />
-                  <path d="M0 0 L200 150 L400 0" stroke="#DFD8CD" strokeWidth="1" />
+                  <path d="M0 0 L200 150 L400 0 Z" fill="#FFFFFF" />
+                  <path d="M0 0 L200 150 L400 0" stroke="#E5E7EB" strokeWidth="1" />
                   {/* Subtle embossed border */}
                   <path
                     d="M30 15 L200 140 L370 15"
-                    stroke="#F8F6F0"
+                    stroke="#F3F4F6"
                     strokeWidth="1.2"
                     strokeLinecap="round"
-                    opacity="0.8"
+                    opacity="0.9"
                   />
                 </svg>
               </motion.div>
