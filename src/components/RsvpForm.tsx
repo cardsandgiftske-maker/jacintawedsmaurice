@@ -5,7 +5,7 @@ import { toPng } from 'html-to-image';
 import { RsvpGuest } from '../types';
 import { WEDDING_DETAILS } from '../data';
 import { saveRsvp, isFirebaseConfigured, hasPhoneAlreadyRsvped } from '../lib/firebase';
-import portraitImg from '../assets/images/wedding_portrait_1785380701719.jpg';
+import portraitImg from '../assets/images/couple_hands_wedding_1790328935151.jpg';
 
 export default function RsvpForm() {
   const [fullName, setFullName] = useState('');
