@@ -154,7 +154,7 @@ export default function Envelope({ onOpen, onSealBreak }: EnvelopeProps) {
                     Saturday, 12th December 2026
                   </p>
                   <p className="text-stone-500 text-[9.5px] mt-0.5">
-                    Parklands Baptist Church • Shinyanga House, Tigoni
+                    Parklands Baptist, Kippro Center • Shinyanga House, Tigoni
                   </p>
                 </div>
 
