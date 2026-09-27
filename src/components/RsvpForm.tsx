@@ -5,7 +5,7 @@ import { toPng } from 'html-to-image';
 import { RsvpGuest } from '../types';
 import { WEDDING_DETAILS } from '../data';
 import { saveRsvp, isFirebaseConfigured, hasPhoneAlreadyRsvped } from '../lib/firebase';
-import portraitImg from '../assets/images/couple_hands_wedding_1790328935151.jpg';
+import portraitImg from '../assets/images/wedding_portrait_1785380701719.jpg';
 
 export default function RsvpForm() {
   const [fullName, setFullName] = useState('');
@@ -106,7 +106,7 @@ export default function RsvpForm() {
         childrenCount: willAttend === 'yes' ? childrenCount : 0,
         submittedAt: new Date().toISOString(),
         eCardCode: generateInvitationCode(),
-        notes: notes.trim(),
+        notes: notes.trim() || undefined,
       };
 
       // Save to Firebase (with transparent localStorage fallback inside)
@@ -447,10 +447,10 @@ export default function RsvpForm() {
                         <div className="border-t border-stone-100 pt-1.5 space-y-0.5">
                           <p className="text-[9px] text-stone-400 font-sans font-bold uppercase tracking-widest">Venues</p>
                           <p className="text-xs font-serif font-medium text-stone-850">
-                            <strong>Ceremony:</strong> Parklands Baptist Church
+                            <strong>Ceremony:</strong> Parklands Baptist Church, Kippro Center, 20 Sports Rd, Nairobi
                           </p>
                           <p className="text-xs font-serif font-medium text-stone-850">
-                            <strong>Reception:</strong> Shinyanga House, Tigoni (1:00 PM)
+                            <strong>Reception:</strong> Shinyanga House, Tigoni (12:30 PM)
                           </p>
                         </div>
                       </div>
