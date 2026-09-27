@@ -12,9 +12,6 @@ export default function LocationMap() {
   const venueInfo = activeVenue === 'ceremony' ? WEDDING_DETAILS.ceremony : WEDDING_DETAILS.reception;
 
   const getNavigationUrl = () => {
-    if (activeVenue === 'ceremony' && 'directMapUrl' in WEDDING_DETAILS.ceremony) {
-      return WEDDING_DETAILS.ceremony.directMapUrl;
-    }
     const venueName = encodeURIComponent(venueInfo.venue + ' ' + venueInfo.address);
     return `https://www.google.com/maps/search/?api=1&query=${venueName}`;
   };
@@ -55,7 +52,7 @@ export default function LocationMap() {
             </div>
             <p className="text-xs text-stone-500 uppercase tracking-widest font-sans font-semibold mb-1">Timeline</p>
             <p className="text-sm text-stone-800 font-serif font-semibold">10:00 AM Ceremony</p>
-            <p className="text-xs text-stone-600 font-sans mt-1">1:00 PM Reception</p>
+            <p className="text-xs text-stone-600 font-sans mt-1">12:30 PM Reception</p>
           </div>
 
           {/* Venue Card */}
@@ -64,7 +61,7 @@ export default function LocationMap() {
               <MapPin className="w-5 h-5" />
             </div>
             <p className="text-xs text-stone-500 uppercase tracking-widest font-sans font-semibold mb-1">Key Venues</p>
-            <p className="text-sm text-stone-800 font-serif font-medium leading-tight">Parklands &amp; Tigoni</p>
+            <p className="text-sm text-stone-800 font-serif font-medium leading-tight">Parklands Baptist &amp; Tigoni</p>
             <p className="text-xs text-sage-800 font-sans mt-1 font-medium">Nairobi &amp; Kiambu County</p>
           </div>
         </div>
@@ -79,7 +76,7 @@ export default function LocationMap() {
               }`}
             >
               <Compass className="w-4 h-4" />
-              <span>1. Ceremony: Parklands Baptist (10 AM)</span>
+              <span>1. Ceremony: Parklands Baptist, Kippro Center (10 AM)</span>
             </button>
             <button
               onClick={() => setActiveVenue('reception')}
@@ -88,7 +85,7 @@ export default function LocationMap() {
               }`}
             >
               <Navigation className="w-4 h-4" />
-              <span>2. Reception: Shinyanga House, Tigoni (1 PM)</span>
+              <span>2. Reception: Shinyanga House, Tigoni (12:30 PM)</span>
             </button>
           </div>
         </div>
